@@ -85,7 +85,8 @@ namespace mService.Controllers
             }
 
 
-            return bOra.Save(appt, User.Identity.Name);
+            //return bOra.Save(appt, User.Identity.Name);
+            return bOra.Save(appt, "link");
 
         }
 
