@@ -1,0 +1,20 @@
+
+
+Method: POST
+Url: http://localhost:6363/api/appointments/SaveRecord
+
+Body:
+
+{
+  "RecNumber": null,
+  "RcptDate": null,
+  "ConsigneeKey": null,
+  "PortOfLoading": null,
+  "MasterBolNumber": null,
+  "BolNumber": null,
+  "TruckNumber": null,
+  "Commodity": null,
+  "Package": null,
+  "Qty": null,
+  "Weight": null
+}
