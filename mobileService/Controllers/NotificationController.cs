@@ -67,10 +67,6 @@ namespace mService.Controllers
             //return false;
         }
 
-        [HttpPost]
-        public bool NotificationDelete(string ID)
-        {
-            return bOra.NotificationDelete(User.Identity.Name, new Guid(ID));
-        }
+        
     }
 }

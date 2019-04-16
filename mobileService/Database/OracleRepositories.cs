@@ -246,22 +246,168 @@ namespace Repositories
 			return false;
 		}
 
+        //============================================ News
+        internal DataTable GetNews()
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT TITLE,NEWS_DATE,IMAGE_URL,DESCRIPTION FROM NEWS ORDER BY NEWS_DATE DESC ", oraConnection);
+
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return null;
+        }
 
         //============================================ Notifications
         internal bool NotificationDelete(string name, Guid guid)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("DELETE FROM MOB_NOTIFICATIONS WHERE UPPER(Username)=@Username AND ID=@ID ", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("Username", SqlDbType.VarChar)).Value =name.ToUpper();
+                    cmd.Parameters.Add(new OracleParameter("ID", SqlDbType.UniqueIdentifier)).Value = ID;
+
+                    OracleDataReader dr = cmd.ExecuteReader();
+                    if (dr.Read())
+                    {
+                        oraConnection.Close();
+                        return true;
+                    }
+                   
+                    
+                    
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return false;
         }
 
         internal DataTable Notifications(string name)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT ID,[DATE],Description,IsSeen,Title FROM MOB_Notifications WHERE UPPER(Username)=@Username ORDER BY [Date] DESC", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("Username", SqlDbType.VarChar)).Value = name.ToUpper();
+
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        internal int NotificationsCount(string name)
+        {
+            int notyCount = 0;
+
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT Count(ID) C FROM MOB_Notifications WHERE UPPER(Username)=@Username AND IsSeen=0 ", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("Username", SqlDbType.VarChar)).Value = name.ToUpper();
+                    
+
+                    OracleDataReader dr = cmd.ExecuteReader();
+                    if (dr.Read())
+                    {
+                        notyCount = Convert.ToInt32(dr["C"].ToString());
+
+                        oraConnection.Close();
+                        return notyCount;
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return notyCount;
+        }
+
+        internal bool NotificationsSeen(string name)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("UPDATE MOB_Notifications SET IsSeen=1 WHERE UPPER(Username)=@Username", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("Username", SqlDbType.VarChar)).Value = name.ToUpper();
+                    
+
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return true;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return false;
         }
 
 
-		//============================================= Appointments
+        //============================================= Appointments
 
-		internal DataTable GetLoadingPorts()
+        internal DataTable GetLoadingPorts()
 		{
 			try
 			{

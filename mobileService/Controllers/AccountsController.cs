@@ -65,6 +65,12 @@ namespace mService.Controllers
             return bOra.SignOutUser(RESTAuthorize.strToken, User.Identity.Name);            
         }
 
+
+        [HttpGet]
+        public string Test()
+        {
+            return "Hello World";
+        }
        
     }
 
