@@ -14,7 +14,7 @@ using Repositories;
 namespace mService.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    //[RESTAuthorize]
+    [RESTAuthorize]
     public class AppointmentsController : ApiController
     {
 
@@ -98,8 +98,8 @@ namespace mService.Controllers
             {
                 if(bOra.isRecordExist("select NVL(TM_STATUS,9) FROM TRUCK_MANIFEST WHERE TM_KEY=nvl('" + app.RecNumber + "','0') and TM_STATUS=0"))
                 {
-                    if (bOra.Submit(app, User.Identity.Name))
-                    {
+                    if (bOra.Submit(app, "link")) //(bOra.Submit(app, User.Identity.Name))
+					{
                         isSubmitted = true;
                     }
                     else

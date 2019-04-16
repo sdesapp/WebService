@@ -6,15 +6,47 @@ Url: http://localhost:6363/api/appointments/SaveRecord
 Body:
 
 {
-  "RecNumber": null,
-  "RcptDate": null,
-  "ConsigneeKey": null,
-  "PortOfLoading": null,
-  "MasterBolNumber": null,
-  "BolNumber": null,
-  "TruckNumber": null,
-  "Commodity": null,
-  "Package": null,
-  "Qty": null,
-  "Weight": null
+  
+  "ConsigneeKey": "SDRS010349",
+  "PortOfLoading": "Ê«—œ… ⁄‰ ÿ—Ìﬁ Ã„—ﬂ  ”·ÊÏ",
+  "MasterBolNumber": "ABCD2548",
+  "BolNumber": "XYZ98764",
+  "TruckNumber": "EF123",
+  "Commodity": "„·«»”",
+  "Package": "PKGS",
+  "Qty": "20",
+  "Weight": "4000"
 }
+
+
+Method : POST
+
+Url: http://localhost:6363/api/appointments/Submit
+
+body:
+
+
+{
+"RecNumber": "032328",
+"ConsigneeId": "SDRS010349",
+"Username": "link"
+}
+
+
+
+delete record POST
+
+http://localhost:6363/api/appointments/Delete
+
+
+{
+"recNumber": "032328"
+
+}
+
+
+OR
+
+http://localhost:6363/api/appointments/Delete?recNumber=032328
+
+

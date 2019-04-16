@@ -79,3 +79,45 @@ D:\Pro\SDES\Web Service\mobileService\obj\Debug\mobileService.csproj.CoreCompile
 D:\Pro\SDES\Web Service\mobileService\obj\Debug\mobileService.csproj.CopyComplete
 D:\Pro\SDES\Web Service\mobileService\obj\Debug\mService.dll
 D:\Pro\SDES\Web Service\mobileService\obj\Debug\mService.pdb
+E:\WebService\mobileService\bin\ApplicationInsights.config
+E:\WebService\mobileService\bin\roslyn\csc.exe
+E:\WebService\mobileService\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\WebService\mobileService\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\WebService\mobileService\bin\roslyn\System.Collections.Immutable.dll
+E:\WebService\mobileService\bin\roslyn\System.Reflection.Metadata.dll
+E:\WebService\mobileService\bin\roslyn\vbc.exe
+E:\WebService\mobileService\bin\roslyn\VBCSCompiler.exe
+E:\WebService\mobileService\bin\roslyn\VBCSCompiler.exe.config
+E:\WebService\mobileService\bin\mService.dll.config
+E:\WebService\mobileService\bin\mService.dll
+E:\WebService\mobileService\bin\mService.pdb
+E:\WebService\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+E:\WebService\mobileService\bin\Newtonsoft.Json.dll
+E:\WebService\mobileService\bin\PushSharp.Amazon.dll
+E:\WebService\mobileService\bin\PushSharp.Apple.dll
+E:\WebService\mobileService\bin\PushSharp.Blackberry.dll
+E:\WebService\mobileService\bin\PushSharp.Core.dll
+E:\WebService\mobileService\bin\PushSharp.Firefox.dll
+E:\WebService\mobileService\bin\PushSharp.Google.dll
+E:\WebService\mobileService\bin\PushSharp.Windows.dll
+E:\WebService\mobileService\bin\System.DirectoryServices.dll
+E:\WebService\mobileService\bin\System.Net.Http.Formatting.dll
+E:\WebService\mobileService\bin\System.Web.Cors.dll
+E:\WebService\mobileService\bin\System.Web.Http.Cors.dll
+E:\WebService\mobileService\bin\System.Web.Http.dll
+E:\WebService\mobileService\bin\System.Web.Http.WebHost.dll
+E:\WebService\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\WebService\mobileService\bin\Newtonsoft.Json.xml
+E:\WebService\mobileService\bin\System.Web.Http.Cors.xml
+E:\WebService\mobileService\bin\System.Net.Http.Formatting.xml
+E:\WebService\mobileService\bin\System.Web.Http.xml
+E:\WebService\mobileService\bin\System.Web.Http.WebHost.xml
+E:\WebService\mobileService\obj\Debug\mobileService.csprojAssemblyReference.cache
+E:\WebService\mobileService\obj\Debug\mobileService.csproj.CoreCompileInputs.cache
+E:\WebService\mobileService\obj\Debug\mobileService.csproj.CopyComplete
+E:\WebService\mobileService\obj\Debug\mService.dll
+E:\WebService\mobileService\obj\Debug\mService.pdb

@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -134,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\PushNotification.cs" />
+    <Compile Include="Controllers\AllUsersController.cs" />
     <Compile Include="Controllers\AppointmentsController.cs" />
     <Compile Include="Database\OracleRepositories.cs" />
     <Compile Include="Models\mNotifications.cs" />

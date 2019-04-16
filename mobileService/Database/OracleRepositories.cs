@@ -34,6 +34,7 @@ namespace Repositories
                     OracleDataReader dr=cmd.ExecuteReader();
                     if (dr.Read())
                     {
+						oraConnection.Close();
                         return true;
                     }
 
@@ -433,7 +434,7 @@ namespace Repositories
                     cmd.CommandType =  CommandType.StoredProcedure;
 
                     cmd.Parameters.Add(new OracleParameter("P_MM_KEY", OracleType.VarChar)).Value = app.RecNumber;
-                    cmd.Parameters.Add(new OracleParameter("P_MAIN_CONSGINEE", OracleType.VarChar)).Value = user.ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("P_MAIN_CONSIGNEE", OracleType.VarChar)).Value = user.ConsigneeId;
                     cmd.Parameters.Add(new OracleParameter("P_USER_ID", OracleType.VarChar)).Value = user.Username;
                     cmd.Parameters.Add(new OracleParameter("P_TYPE", OracleType.VarChar)).Value = "T";
 

@@ -21,17 +21,17 @@ namespace mService.Controllers
         OracleRepository bOra = new OracleRepository();
 
         [HttpPost,HttpGet]
-        public mAccounts VerifyUser() //(mAccounts credentials)
+        public mAccounts VerifyUser(mAccounts credentials)
         {
 
             try
             {
-				mAccounts credentials = new mAccounts() {
-					Username= "sfaridi",
-					Password= "1234567",
-					DeviceId="no-id",
-					DeviceType="web"
-				};
+				//mAccounts credentials = new mAccounts() {
+				//	Username= "sfaridi",
+				//	Password= "1234567",
+				//	DeviceId="no-id",
+				//	DeviceType="web"
+				//};
 
 				//Active Directory User Login
 
