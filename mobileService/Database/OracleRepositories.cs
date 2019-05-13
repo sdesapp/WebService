@@ -114,70 +114,76 @@ namespace Repositories
 
         internal mAccounts Verify(string username, string password)
         {
-			try
-			{
+            
+            try
+            {
+                
+                oraConnection.Open();
+               
+                if (oraConnection.State == ConnectionState.Open)
+                {
+  
+                    OracleCommand cmd = new OracleCommand("GET_USER_DETAIL", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar).Value = username;
+                    cmd.Parameters.Add("P_PASSWORD", OracleType.VarChar).Value = password;
+                    
+                    OracleParameter param = new OracleParameter("P_USER_NAME", OracleType.Char);
+                    param.Size = 400;
+                    param.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(param);
 
-				oraConnection.Open();
-				if (oraConnection.State == ConnectionState.Open)
-				{
-					//str = "select user_id,user_password,user_desc,user_type,user_name,substr(user_desc,1,10),user_screen from login_user where user_id='" & userid.Text & "'"
-					OracleCommand cmd = new OracleCommand("DFZDB_CRYPTO.ENCRYPT ", oraConnection);
+                    OracleParameter param1 = new OracleParameter("P_USER_GRP_ID", OracleType.Char);
+                    param1.Size = 400;
+                    param1.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(param1);
 
-					OracleParameter p = new OracleParameter("p_key_string", OracleType.VarChar,30);
-					p.Value= "GALAXYERP";
-					p.Direction = ParameterDirection.Input;
-					cmd.Parameters.Add(p);
+                    OracleParameter param2 = new OracleParameter("P_USER_EMP_CODE", OracleType.Char);
+                    param2.Size = 400;
+                    param2.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(param2);
 
-					OracleParameter p1 = new OracleParameter("P_STRING", OracleType.VarChar,250);
-					p1.Value = password;
-					p1.Direction = ParameterDirection.InputOutput;
-					cmd.Parameters.Add(p1);
+                    OracleParameter param3 = new OracleParameter("P_USER_DESC", OracleType.Char);
+                    param3.Size = 400;
+                    param3.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(param3);
 
-					OracleParameter p2 = new OracleParameter("P_ERROR_NO", OracleType.Int32);
-					p2.Direction = ParameterDirection.Output;
-					cmd.Parameters.Add(p2);
+                    OracleParameter param4 = new OracleParameter("P_STATUS", OracleType.Char);
+                    param4.Size = 400;
+                    param4.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(param4);
 
+                    int res=cmd.ExecuteNonQuery();                    
+                                        
+                     if (res>0)
+                      {
+                        string strEmpId = cmd.Parameters["P_USER_EMP_CODE"].Value.ToString();
+                        string roleName = "Employee";
+                        if (string.IsNullOrEmpty(strEmpId)) { roleName = "Customer"; }
 
-					
-					cmd.CommandType = CommandType.StoredProcedure;
+                          mAccounts account = new mAccounts()
+                          {
+                              Name = cmd.Parameters["P_USER_NAME"].Value.ToString(),
+                              EmployeeId= strEmpId,
+                              RoleName = roleName,
+                              ConsigneeId = cmd.Parameters["P_USER_DESC"].Value.ToString(),
+                              IsValid = true,
+                              Username = username
+                          };
+                    
+                        oraConnection.Close();
+                        return account;
+                    }
+                }
 
-					cmd.ExecuteNonQuery();
-					var passEncrypt = cmd.Parameters["P_STRING"].Value;
-
-
-					cmd = new OracleCommand(" select user_id,user_password,user_desc,USER_GRP_ID,user_type,user_name,substr(user_desc,1,10),USER_EMP_CODE,user_screen from login_user where user_id=:Username AND user_password=:Password", oraConnection);
-					cmd.Parameters.Add("Username", OracleType.VarChar).Value = username;
-					cmd.Parameters.Add("Password", OracleType.VarChar).Value = passEncrypt;
-					OracleDataReader dr= cmd.ExecuteReader();
-					if (dr.Read())
-					{
-						mAccounts account = new mAccounts()
-						{
-							Name = dr["user_name"].ToString(),
-							RoleName = dr["USER_GRP_ID"].ToString(),
-							EmployeeId = dr["USER_EMP_CODE"].ToString(),
-                            ConsigneeId= dr["user_desc"].ToString(),
-                            IsValid =true,
-							Username=username
-
-
-
-						};
-						
-						oraConnection.Close();
-						return account;
-					}
-
-				}
-
-			}
-			catch (Exception ex)
-			{
-
-			}
-			oraConnection.Close();
-			return null;
-		}
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            oraConnection.Close();
+            return null;
+        }
 
         public mAccounts GetUserDetails(string Username) {
             try
@@ -246,6 +252,82 @@ namespace Repositories
 			return false;
 		}
 
+        //============================================ Billing
+        internal DataTable GetInvoice(string ConsigneeId,string BLNumber,string ContainerNo,string FromDate,string ToDate) {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(  " select distinct im.inv_no as inv_no,to_char(inv_date,'dd/mm/yyyy') as inv_date,decode(term,'CA','Cash','CR','Credit') "+
+                                                            " as term, to_char(total, '999,999,999.99') as Amount, im.storerkey as storerkey "+
+                                                            " from invoice_master im, invoice_detail id, operationdetails od " +
+                                                            " where id.inv_no = im.inv_no " +
+                                                            " and od.toid = id.id " +
+                                                            " and od.lot = id.lot " +
+                                                            " and im.storerkey = :ConsigneeID " +
+                                                            " and substr(id.id, 5, length(id.id)) = nvl(:Container, substr(id.id, 5, length(id.id))) " +
+                                                            " and od.bolnumber = nvl(:BLNumber, od.bolnumber) " +
+                                                            " and im.storerkey like 'SDRS%' and " +
+                                                            " to_CHAR(inv_date, 'YYYY/MM/DD') between nvl(:FromDate, to_char(inv_date, 'YYYY/MM/DD')) and nvl(:ToDate, to_char(inv_date, 'YYYY/MM/DD')) " +
+                                                            " order by  inv_no ", oraConnection);
+
+                    cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("BLNumber", OracleType.VarChar)).Value = string.IsNullOrEmpty(BLNumber)?string.Empty:BLNumber;
+                    cmd.Parameters.Add(new OracleParameter("Container", OracleType.VarChar)).Value = string.IsNullOrEmpty(ContainerNo) ? string.Empty : ContainerNo; 
+                    cmd.Parameters.Add(new OracleParameter("FromDate", OracleType.VarChar)).Value = string.IsNullOrEmpty(FromDate) ? string.Empty : FromDate; 
+                    cmd.Parameters.Add(new OracleParameter("ToDate", OracleType.VarChar)).Value = string.IsNullOrEmpty(ToDate) ? string.Empty : ToDate;
+
+
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        internal DataTable GetInvoiceDetails(string InvoiceID) {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(  "select sl_no,charge_desc,to_char(billedunits,'999') as billedunits,to_char(RATE,'999,999,999.99') as rate,to_char(CHARGE_AMOUNT,'999,999,999.99') as charge_amount, "+
+                                                            " marksandnumbers from invoice_detail where inv_no = :invoice_id order by sl_no ", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("invoice_id", OracleType.VarChar)).Value = InvoiceID;
+
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
         //============================================ News
         internal DataTable GetNews()
         {
@@ -287,7 +369,7 @@ namespace Repositories
 
                     OracleCommand cmd = new OracleCommand("DELETE FROM MOB_NOTIFICATIONS WHERE UPPER(Username)=@Username AND ID=@ID ", oraConnection);
                     cmd.Parameters.Add(new OracleParameter("Username", SqlDbType.VarChar)).Value =name.ToUpper();
-                    cmd.Parameters.Add(new OracleParameter("ID", SqlDbType.UniqueIdentifier)).Value = ID;
+                    cmd.Parameters.Add(new OracleParameter("ID", SqlDbType.UniqueIdentifier)).Value = guid;
 
                     OracleDataReader dr = cmd.ExecuteReader();
                     if (dr.Read())

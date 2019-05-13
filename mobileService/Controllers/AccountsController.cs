@@ -26,15 +26,6 @@ namespace mService.Controllers
 
             try
             {
-				//mAccounts credentials = new mAccounts() {
-				//	Username= "sfaridi",
-				//	Password= "1234567",
-				//	DeviceId="no-id",
-				//	DeviceType="web"
-				//};
-
-				//Active Directory User Login
-
 				var  verifiedEmp = bOra.Verify(credentials.Username, credentials.Password);
 
 
@@ -49,7 +40,7 @@ namespace mService.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
                 // invalid credentials
             }
             
@@ -57,6 +48,49 @@ namespace mService.Controllers
             return null;
 
         }
+
+
+        [HttpPost, HttpGet]
+        public mAccounts VerifyUser1()
+        {
+
+            try
+            {
+                mAccounts credentials = new mAccounts()
+                {
+                    Username = "ars",
+                    Password = "1234567",
+                    DeviceId = "no-id",
+                    DeviceType = "web"
+                };
+
+                //Active Directory User Login
+
+                var verifiedEmp = bOra.Verify(credentials.Username, credentials.Password);
+               // return verifiedEmp;
+
+                if (verifiedEmp != null)
+                {
+                    string token = (Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Convert.ToBase64String(Guid.NewGuid().ToByteArray())).Replace("=", "");
+                    bOra.InsertAccountDetails(token, verifiedEmp.RoleName, credentials.Username, credentials.DeviceType, credentials.DeviceId);
+
+                    verifiedEmp.Token = token;
+                    return verifiedEmp;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                // invalid credentials
+            }
+
+
+            return null;
+
+        }
+
+
+
 
         [HttpGet]
         [RESTAuthorize]
