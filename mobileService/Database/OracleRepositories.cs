@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.OracleClient;
 
 using mService.Models;
 using System.Configuration;
-using mService.Models;
-
-
 
 namespace Repositories
 {
@@ -76,6 +72,73 @@ namespace Repositories
             oraConnection.Close();
             return 0;
         }
+        // Get Leave and Procurment approval list
+        internal  DataTable GetApprovalList(string username)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("select vardoc_no, varemp_code, vardept_code, varleave_type, varleave_desc, varstart_date, varend_date, varannual_days, varother_days, " +
+                                            "varunpaid_days, vartotal_days,varinternal_external,varleave_status from TABLE(emp_leave_val(:username)) ", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
+                        DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+        //get PROC APPROVAL LIST
+        internal DataTable GetProcList(string username)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT REQ_TYPE,REQ_NO,REQ_DATE,REQ_BY,REQ_DEPT_CODE,REQ_DEPT_HEAD,REQ_PURPOSE,SUBMIT,REQ_STATUS,REQ_STATUS_DESC FROM TABLE(proc_app_list(:username))", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
 
         //============================================ Accounts
 
@@ -328,6 +391,120 @@ namespace Repositories
             return null;
         }
 
+
+        //============================================ Container Status
+        internal DataTable GetContainer(string ConsigneeId, string ContainerNo)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(" select od.bolnumber as bolnumber, substr(toid, 5, length(toid)) as Container_no, decode(sku, 'CNT20', '20 Ft.', 'CNT40', '40 Ft', 'CNT45', '45 Ft.') as sku," +
+                                                           " carrierreference, company, curr_loc, od.storerkey as storerkey, od.sku as sku1, od.lot as lot" +
+                                                           " from storer s, receipt r, operationdetails od " +
+                                                           " where r.storerkey = s.storerkey and od.receiptkey = r.receiptkey and " +
+                                                           " sku like 'CNT%' and r.storerkey like 'SDRS%' and  lot = (select max(TOLOT) " +
+                                                           " from receiptdetail where substr(toid,5,length(toid))=nvl(:ContainerNo,substr(toid,5,length(toid)))) " +
+                                                           " and r.storerkey in nvl(:ConsigneeID,r.storerkey) " +
+                                                           " and substr(toid, 5, length(toid)) = " +
+                                                           " nvl(:ContainerNo, substr(toid, 5, length(toid)))", oraConnection);
+
+                 //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                      cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = string.IsNullOrEmpty(ConsigneeId) ? string.Empty : ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        internal DataTable GetContainerDetails(string ConsigneeId, string ContainerNo)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(" select 'Received in Bonded Zone'as status,to_char(datereceived,'dd/mm/yyyy HH24:MI:SS') as date1 ,datereceived as date2 from receiptdetail where " +
+                                                          " toid='CNT-'||:ContainerNo and storerkey =nvl(:ConsigneeID,storerkey) and tolot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) union all " +
+                                                          " select 'Moved to Strip Position :'||toloc,to_char(trans_date, 'dd/mm/yyyy HH24:MI:SS'),trans_date from cont_movement_detail where " +
+                                                          " container_no='CNT-'||:ContainerNo and lot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) and fromloc='SHIFTOUT' and storerkey=nvl(:ConsigneeID,storerkey) union all " +
+                                                          " select description1, to_char(effectivedate, 'dd/mm/yyyy HH24:MI:SS'), effectivedate " +
+                                                          " from containerstatus_view where TOSTORERKEY=nvl(:ConsigneeID,TOSTORERKEY) and toid='CNT-'||:ContainerNo and tolot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) union all " +
+                                                          " select 'Shipped from Bonded Zone',to_char(effectivedate, 'dd/mm/yyyy HH24:MI:SS'),effectivedate from pickdetail " +
+                                                          " where storerkey=nvl(:ConsigneeID,storerkey) and id='CNT-'||:ContainerNo and lot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) order by 3", oraConnection);
+
+                    cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = string.IsNullOrEmpty(ConsigneeId) ? string.Empty : ConsigneeId;
+                    //cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        internal DataTable GetContainerStatus(string ContainerNo)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(" Select ENG_DESC from codelkup where listname = 'CNTSTATUS' and code = (select containerstatus from id where" +
+                                                          " substr(id, 5, length(id)) = nvl(:ContainerNo, substr(id, 5, length(id)))) ", oraConnection);
+
+                   
+                    cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
         //============================================ News
         internal DataTable GetNews()
         {
@@ -338,7 +515,7 @@ namespace Repositories
                 if (oraConnection.State == ConnectionState.Open)
                 {
 
-                    OracleCommand cmd = new OracleCommand("SELECT TITLE,NEWS_DATE,IMAGE_URL,DESCRIPTION FROM NEWS ORDER BY NEWS_DATE DESC ", oraConnection);
+                    OracleCommand cmd = new OracleCommand("SELECT TITLE,NEWS_DATE,IMAGE_URL,DESCRIPTION FROM NEWS ORDER BY NEWS_DATE DESC", oraConnection);
 
                     DataTable dt = new DataTable();
                     OracleDataAdapter da = new OracleDataAdapter(cmd);
@@ -401,7 +578,7 @@ namespace Repositories
                 if (oraConnection.State == ConnectionState.Open)
                 {
 
-                    OracleCommand cmd = new OracleCommand("SELECT ID,[DATE],Description,IsSeen,Title FROM MOB_Notifications WHERE UPPER(Username)=@Username ORDER BY [Date] DESC", oraConnection);
+                    OracleCommand cmd = new OracleCommand("SELECT ID,NO_DATE,DESCRIPTION,ISSEEN,TITLE FROM MOB_NOTIFICATIONS  WHERE username=:Username ORDER BY NO_DATE DESC", oraConnection);
                     cmd.Parameters.Add(new OracleParameter("Username", SqlDbType.VarChar)).Value = name.ToUpper();
 
                     DataTable dt = new DataTable();

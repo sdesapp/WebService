@@ -58,7 +58,7 @@ namespace mService.Controllers
                 mNotifications noty = new mNotifications()
                 {
                     ID = Convert.ToInt32(record["ID"]),
-                    Date = DateTime.ParseExact(record["Date"].ToString(), "dd/MM/yyyy hh:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd"),
+                    Date = DateTime.ParseExact(record["NO_DATE"].ToString(), "dd/MM/yyyy hh:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd"),
                     Description = record["Description"].ToString(),
                     isSeen = Convert.ToInt32(record["IsSeen"]),
                     Title = record["Title"].ToString()

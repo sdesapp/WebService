@@ -20,6 +20,17 @@ namespace mService.Controllers
     {
         OracleRepository bOra = new OracleRepository();
 
+        //[HttpGet]
+        //public mAccounts Test(string u,string p)
+        //{
+        //   return VerifyUser(new mAccounts() {
+        //        Username =u,
+        //        Password =p,
+        //        DeviceId = "no-id",
+        //        DeviceType = "web"
+        //    });
+        //}
+
         [HttpPost,HttpGet]
         public mAccounts VerifyUser(mAccounts credentials)
         {
@@ -28,8 +39,11 @@ namespace mService.Controllers
             {
 				var  verifiedEmp = bOra.Verify(credentials.Username, credentials.Password);
 
+                // For Customer EmployeeId=""
+                // For Employee EmployeeId="XXXX"
+                // For Invalid  EmployeeId="N"
 
-                if (verifiedEmp != null)
+                if (verifiedEmp != null && verifiedEmp.EmployeeId.TrimEnd()!="N")
                 {
                     string token = (Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Convert.ToBase64String(Guid.NewGuid().ToByteArray())).Replace("=", "");
                     bOra.InsertAccountDetails(token, verifiedEmp.RoleName, credentials.Username,  credentials.DeviceType, credentials.DeviceId);
@@ -100,11 +114,7 @@ namespace mService.Controllers
         }
 
 
-        [HttpGet]
-        public string Test()
-        {
-            return "Hello World";
-        }
+        
        
     }
 

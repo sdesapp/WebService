@@ -1,7 +1,7 @@
 ﻿
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.OracleClient;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -110,20 +110,20 @@ namespace mService
         public static mMobileAuthentications ValidateToken(string strToken)
         {
 
-            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["oraConnectionString"].ToString();
+            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["oraConnectionString"].ConnectionString;
 
-            SqlConnection con =
-            new SqlConnection(connectionString);
+            OracleConnection con =
+            new OracleConnection(connectionString);
 
             try
             {
                 con.Open();
-                SqlCommand cmd =
-                    new SqlCommand(" SELECT TOKEN,ROLENAME,USER_ID FROM MOB_AUTHENTICATION WHERE TOKEN=@token", con);
+                OracleCommand cmd =
+                    new OracleCommand(" SELECT TOKEN,ROLENAME,USER_ID FROM MOB_AUTHENTICATION WHERE TOKEN=:token", con);
 
-                cmd.Parameters.Add(new SqlParameter("token", SqlDbType.VarChar)).Value = strToken;
+                cmd.Parameters.Add(new OracleParameter("token", SqlDbType.VarChar)).Value = strToken;
 
-                SqlDataReader dr = cmd.ExecuteReader();
+                OracleDataReader dr = cmd.ExecuteReader();
 
                 if (dr.Read())
                 {

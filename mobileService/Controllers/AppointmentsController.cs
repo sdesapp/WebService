@@ -14,7 +14,7 @@ using Repositories;
 namespace mService.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    [RESTAuthorize]
+   [RESTAuthorize]
     public class AppointmentsController : ApiController
     {
 

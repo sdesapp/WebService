@@ -1,100 +1,33 @@
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\ApplicationInsights.config
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\csc.exe
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CodeAnalysis.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CSharp.Core.targets
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\Microsoft.VisualBasic.Core.targets
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\System.Collections.Immutable.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\System.Reflection.Metadata.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\vbc.exe
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\VBCSCompiler.exe
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\roslyn\VBCSCompiler.exe.config
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\mService.dll.config
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\mService.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\mService.pdb
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\Newtonsoft.Json.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Amazon.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Apple.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Blackberry.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Core.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Firefox.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Google.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\PushSharp.Windows.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.DirectoryServices.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Net.Http.Formatting.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Cors.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Http.Cors.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Http.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Http.WebHost.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\Newtonsoft.Json.xml
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Http.Cors.xml
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Net.Http.Formatting.xml
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Http.xml
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\bin\System.Web.Http.WebHost.xml
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\obj\Debug\mService.dll
-C:\Users\ahuss\Desktop\SDES\Web Service\mobileService\obj\Debug\mService.pdb
-D:\Pro\SDES\Web Service\mobileService\bin\ApplicationInsights.config
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\csc.exe
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CodeAnalysis.dll
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\Microsoft.CSharp.Core.targets
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\Microsoft.VisualBasic.Core.targets
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\System.Collections.Immutable.dll
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\System.Reflection.Metadata.dll
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\vbc.exe
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\VBCSCompiler.exe
-D:\Pro\SDES\Web Service\mobileService\bin\roslyn\VBCSCompiler.exe.config
-D:\Pro\SDES\Web Service\mobileService\bin\mService.dll.config
-D:\Pro\SDES\Web Service\mobileService\bin\mService.dll
-D:\Pro\SDES\Web Service\mobileService\bin\mService.pdb
-D:\Pro\SDES\Web Service\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
-D:\Pro\SDES\Web Service\mobileService\bin\Newtonsoft.Json.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Amazon.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Apple.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Blackberry.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Core.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Firefox.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Google.dll
-D:\Pro\SDES\Web Service\mobileService\bin\PushSharp.Windows.dll
-D:\Pro\SDES\Web Service\mobileService\bin\System.DirectoryServices.dll
-D:\Pro\SDES\Web Service\mobileService\bin\System.Net.Http.Formatting.dll
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Cors.dll
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Http.Cors.dll
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Http.dll
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Http.WebHost.dll
-D:\Pro\SDES\Web Service\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\Pro\SDES\Web Service\mobileService\bin\Newtonsoft.Json.xml
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Http.Cors.xml
-D:\Pro\SDES\Web Service\mobileService\bin\System.Net.Http.Formatting.xml
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Http.xml
-D:\Pro\SDES\Web Service\mobileService\bin\System.Web.Http.WebHost.xml
-D:\Pro\SDES\Web Service\mobileService\obj\Debug\mobileService.csprojAssemblyReference.cache
-D:\Pro\SDES\Web Service\mobileService\obj\Debug\mobileService.csproj.CoreCompileInputs.cache
-D:\Pro\SDES\Web Service\mobileService\obj\Debug\mobileService.csproj.CopyComplete
-D:\Pro\SDES\Web Service\mobileService\obj\Debug\mService.dll
-D:\Pro\SDES\Web Service\mobileService\obj\Debug\mService.pdb
 E:\WebService\mobileService\bin\ApplicationInsights.config
-E:\WebService\mobileService\bin\roslyn\csc.exe
-E:\WebService\mobileService\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
-E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.dll
-E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
-E:\WebService\mobileService\bin\roslyn\Microsoft.CSharp.Core.targets
-E:\WebService\mobileService\bin\roslyn\Microsoft.VisualBasic.Core.targets
-E:\WebService\mobileService\bin\roslyn\System.Collections.Immutable.dll
-E:\WebService\mobileService\bin\roslyn\System.Reflection.Metadata.dll
-E:\WebService\mobileService\bin\roslyn\vbc.exe
-E:\WebService\mobileService\bin\roslyn\VBCSCompiler.exe
-E:\WebService\mobileService\bin\roslyn\VBCSCompiler.exe.config
 E:\WebService\mobileService\bin\mService.dll.config
 E:\WebService\mobileService\bin\mService.dll
 E:\WebService\mobileService\bin\mService.pdb
+E:\WebService\mobileService\bin\roslyn\csc.exe
+E:\WebService\mobileService\bin\roslyn\csc.exe.config
+E:\WebService\mobileService\bin\roslyn\csc.rsp
+E:\WebService\mobileService\bin\roslyn\csi.exe
+E:\WebService\mobileService\bin\roslyn\csi.rsp
+E:\WebService\mobileService\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\WebService\mobileService\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\WebService\mobileService\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\WebService\mobileService\bin\roslyn\System.AppContext.dll
+E:\WebService\mobileService\bin\roslyn\System.Collections.Immutable.dll
+E:\WebService\mobileService\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\WebService\mobileService\bin\roslyn\System.IO.FileSystem.dll
+E:\WebService\mobileService\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\WebService\mobileService\bin\roslyn\System.Reflection.Metadata.dll
+E:\WebService\mobileService\bin\roslyn\vbc.exe
+E:\WebService\mobileService\bin\roslyn\vbc.exe.config
+E:\WebService\mobileService\bin\roslyn\vbc.rsp
+E:\WebService\mobileService\bin\roslyn\VBCSCompiler.exe
+E:\WebService\mobileService\bin\roslyn\VBCSCompiler.exe.config
 E:\WebService\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 E:\WebService\mobileService\bin\Newtonsoft.Json.dll
 E:\WebService\mobileService\bin\PushSharp.Amazon.dll
@@ -112,9 +45,9 @@ E:\WebService\mobileService\bin\System.Web.Http.dll
 E:\WebService\mobileService\bin\System.Web.Http.WebHost.dll
 E:\WebService\mobileService\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 E:\WebService\mobileService\bin\Newtonsoft.Json.xml
-E:\WebService\mobileService\bin\System.Web.Http.Cors.xml
 E:\WebService\mobileService\bin\System.Net.Http.Formatting.xml
 E:\WebService\mobileService\bin\System.Web.Http.xml
+E:\WebService\mobileService\bin\System.Web.Http.Cors.xml
 E:\WebService\mobileService\bin\System.Web.Http.WebHost.xml
 E:\WebService\mobileService\obj\Debug\mobileService.csprojAssemblyReference.cache
 E:\WebService\mobileService\obj\Debug\mobileService.csproj.CoreCompileInputs.cache

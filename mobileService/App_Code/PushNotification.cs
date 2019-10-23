@@ -111,7 +111,7 @@ namespace mService
                         var gcmNotification = notificationException.Notification;
                         var description = notificationException.Description;
 
-                        Console.WriteLine($"GCM Notification Failed: ID={gcmNotification.MessageId}, Desc={description}");
+                     //   Console.WriteLine($"GCM Notification Failed: ID={gcmNotification.MessageId}, Desc={description}");
                     }
                     else if (ex is GcmMulticastResultException)
                     {
@@ -119,7 +119,7 @@ namespace mService
 
                         foreach (var succeededNotification in multicastException.Succeeded)
                         {
-                            Console.WriteLine($"GCM Notification Succeeded: ID={succeededNotification.MessageId}");
+                     //       Console.WriteLine($"GCM Notification Succeeded: ID={succeededNotification.MessageId}");
                         }
 
                         foreach (var failedKvp in multicastException.Failed)
@@ -127,7 +127,7 @@ namespace mService
                             var n = failedKvp.Key;
                             var e = failedKvp.Value;
 
-                            Console.WriteLine($"GCM Notification Failed: ID={n.MessageId}, Desc={e.Message}");
+                    //        Console.WriteLine($"GCM Notification Failed: ID={n.MessageId}, Desc={e.Message}");
                         }
 
                     }

@@ -21,10 +21,7 @@ namespace mService.Controllers
 
             try
             {
-
-
-                DataTable dt = bOra.Notifications(User.Identity.Name);
-
+            DataTable dt = bOra.Notifications(User.Identity.Name);
                 if (dt != null)
                 {
                     foreach(DataRow row in dt.Rows)
