@@ -12,6 +12,8 @@ namespace Repositories
     {
         OracleConnection oraConnection = new OracleConnection(ConfigurationManager.ConnectionStrings["oraConnectionString"].ConnectionString);
 
+        public OracleParameter Param { get; private set; }
+
         //============================================ General
         /// <summary>
         /// Execute the query and check if the record exist
@@ -72,8 +74,9 @@ namespace Repositories
             oraConnection.Close();
             return 0;
         }
-        // Get Leave and Procurment approval list
-        internal  DataTable GetApprovalList(string username)
+
+        // Get Leave Count 
+        internal DataTable GetApprovalCount(string username)
         {
             try
             {
@@ -82,41 +85,7 @@ namespace Repositories
                 if (oraConnection.State == ConnectionState.Open)
                 {
 
-                    OracleCommand cmd = new OracleCommand("select vardoc_no, varemp_code, vardept_code, varleave_type, varleave_desc, varstart_date, varend_date, varannual_days, varother_days, " +
-                                            "varunpaid_days, vartotal_days,varinternal_external,varleave_status from TABLE(emp_leave_val(:username)) ", oraConnection);
-
-                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
-                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
-                        DataTable dt = new DataTable();
-                    OracleDataAdapter da = new OracleDataAdapter(cmd);
-                    da.Fill(dt);
-                    oraConnection.Close();
-                    return dt;
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-
-            }
-            oraConnection.Close();
-            return null;
-        }
-
-
-        //get PROC APPROVAL LIST
-        internal DataTable GetProcList(string username)
-        {
-            try
-            {
-
-                oraConnection.Open();
-                if (oraConnection.State == ConnectionState.Open)
-                {
-
-                    OracleCommand cmd = new OracleCommand("SELECT REQ_TYPE,REQ_NO,REQ_DATE,REQ_BY,REQ_DEPT_CODE,REQ_DEPT_HEAD,REQ_PURPOSE,SUBMIT,REQ_STATUS,REQ_STATUS_DESC FROM TABLE(proc_app_list(:username))", oraConnection);
+                    OracleCommand cmd = new OracleCommand("select count(1) as Count from TABLE(emp_leave_val(:username)), EMP_MASTER where varemp_code = emp_code", oraConnection);
 
                     //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
                     cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
@@ -139,6 +108,762 @@ namespace Repositories
         }
 
 
+        // Procurment count 
+        internal DataTable GetProcCount(string username)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT Count(1) as Count FROM TABLE(PROC_APPROVAL_LIST(:username))", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        // Get Leave approval list
+        internal  DataTable GetApprovalList(string username)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+
+                {
+
+                    OracleCommand cmd = new OracleCommand(" select vardoc_no, varemp_code,emp_name, vardept_code, varleave_type, varleave_desc, varstart_date, varend_date, varannual_days, varother_days," +
+                                                          " varunpaid_days, vartotal_days, varinternal_external, varleave_status, elam_file_name from TABLE(emp_leave_val(:username)) , EMP_MASTER, emp_leave_application_master " +
+                                                          " where varemp_code = emp_code and vardoc_no = elam_doc_no ", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
+                        DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+       
+
+        // Get pending Contracts
+        internal DataTable GetContractApprovalList(string username)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("select cont_id,cust_name,cust_bl_name,start_date,end_date from TABLE(WEB_CUST_CONTRACT_APPR_LIST(:username))", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+
+        internal DataTable GetContractDetail(string custid)
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("select CB_CONT_ID,CB_STORERKEY,CB_NAME,CB_BL_NAME,CB_ADDRESS,CB_CITY,CB_VAT_REG_NUMBER,CB_CONTACT1,CB_PHONE1,CB_MOBILE1,CB_EMAIL1,CB_SIGNATORY,CB_BL_SIGNATORY,CB_SIGNATORY_TITLE,CB_SIGNATORY_BL_TITLE,CB_SIGNED_DATE,CB_CR_NUMBER,CB_CR_EXPIRE_DATE,CB_CR_ATTACH_FILE,CB_VAT_ATTACH_FILE,CC_CONT_ID,CC_START_DATE," +
+                                                         "CC_END_DATE,DECODE(CC_CUST_CATEGORY,001, 'PROPERTY LEASED',002,'HANDLING SERVICES') CC_CUST_CATEGORY,CC_WH_LEASE_FLAG,CC_COVS_LEASE_FLAG,CC_OPENY_LEASE_FLAG,CC_OFFICE_LEASE_FLAG,CC_AUTOZONE_LEASE_FLAG,CC_CHEMZONE_LEASE_FLAG,DECODE(CC_HI_BILL_PAY_MODE,'CA', 'CASH','CR', 'CREDIT') CC_HI_BILL_PAY_MODE,CC_HI_BILL_FLAG,CC_CONT_DEM_BILL_FLAG,CC_CARGO_DEM_BILL_FLAG,CC_CARGO_INSP_FLAG,CC_CONT_TYPE,CC_CONT_FREE_DAYS,CC_CARGO_FREE_DAYS,DECODE(CC_CONT_DEM_CALC_BY,001, 'By Container',002,'By Weight',003,'By Area Size') CC_CONT_DEM_CALC_BY,CC_CONT_DEM_CHARGES," +
+                                                        "DECODE(CC_CARGO_DEM_CALC_BY,001, 'By Weight',002, 'By Area Size') CC_CARGO_DEM_CALC_BY,CC_CARGO_DEM_CHARGES,CC_TERMINATION_DAYS,CC_ATTACH_FILE,CC_STATUS,CC_TARIFF_AFFECTED_FLAG,CC_HI_CREDIT_PERIOD,CC_HI_CREDIT_LIMIT from CUSTOMER_BASIC a, CUSTOMER_CONTRACT b where CB_CONT_ID = :custid and CB_CONT_ID = CC_CONT_ID", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("custid", OracleType.VarChar)).Value = custid;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+
+        internal DataTable GetContractTariff(string custid1)
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("select DESCRIP,CT_ORIG_PRICE,CT_CHANGE_PERC,CT_FINAL_PRICE from CUSTOMER_TARIFF A," +
+                                                          "GLDISTRIBUTION B where ct_cont_id= :custid1 AND a.ct_charge_code=B.GLDISTRIBUTIONKEY ORDER BY a.ct_sl_no", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("custid1", OracleType.VarChar)).Value = custid1;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+        internal DataTable GetContractLease(string custid2) //LEASE
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("SELECT CLPD_CONT_ID,CLPD_LOC,CLPD_AREA,DECODE(CLPD_BILL_FREQUENCY,01,'Per Annum',02, 'Six Months', 03,'Quarterly',04, 'Monthly') CLPD_BILL_FREQUENCY, CLPD_START_DATE, CLPD_END_DATE,CLPD_ELECTRICITY, CLPD_CLEANING, CLPD_IT_SERVICES FROM CUSTOMER_LEASE_PROPERTY_DETAIL where CLPD_CONT_ID =:custid2", oraConnection);                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("custid2", OracleType.VarChar)).Value = custid2;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+
+        internal DataTable GetContractSales(string custid4) //Sales
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("select a.CST_CONT_ID,a.CST_EMP_CODE,a.CST_REMARKS,b.EMP_NAME FROM CUSTOMER_SALES_TEAM a, EMP_MASTER b  " +
+                        "where a.cst_emp_code = b.emp_code and  a.cst_cont_id =:custid4", oraConnection);                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("custid4", OracleType.VarChar)).Value = custid4;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+
+        internal DataTable GetContractPrivilege(string custid4) //SPECIAL_PREVILEGE
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("SELECT CSP_CONT_ID, CSP_DOBEFORECNTARRIVALFLAG FROM CUSTOMER_SPECIAL_PREVILEGE where csp_cont_id=:custid4", oraConnection);                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("custid4", OracleType.VarChar)).Value = custid4;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+        public bool ApproveContract(string count_id, string user_id, string ip_address, out string P_MSG_ID)
+        {
+            bool rowAffected = false;
+            P_MSG_ID = null;
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("CUSTOMER_CONTRACT_APPROVAL_PROCESS.APPROVE", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    //    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar, Username, ParameterDirection.Input);
+
+                    OracleParameter Param1 = new OracleParameter();
+                    Param1.ParameterName = "P_CONT_ID";
+                    Param1.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param1.Direction = ParameterDirection.Input;
+                    //       Param.Size = 88;
+                    Param1.Value = count_id;
+                    cmd.Parameters.Add(Param1);
+
+                    OracleParameter Param2 = new OracleParameter();
+                    Param2.ParameterName = "P_USER_ID";
+                    Param2.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param2.Direction = ParameterDirection.Input;
+                    //   Param.Size = 88;
+                    Param2.Value = user_id;
+                    cmd.Parameters.Add(Param2);
+
+                    OracleParameter Param3 = new OracleParameter();
+                    Param3.ParameterName = "P_IP_ADDRESS";
+                    Param3.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param3.Direction = ParameterDirection.Input;
+                    Param3.Value = ip_address;
+                    cmd.Parameters.Add(Param3);
+
+                    OracleParameter Param4 = new OracleParameter();
+                    Param4.ParameterName = "P_MSG_ID";
+                    Param4.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param4.Direction = ParameterDirection.Output;
+                    Param4.Size = 250;
+                    cmd.Parameters.Add(Param4);
+
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        rowAffected = true;
+                        oraConnection.Close();
+                        return rowAffected;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            //   message = "";
+            return rowAffected;
+
+        }
+
+
+
+
+
+
+        public bool RejectContract(string count_id, string rej_reason, string user_id, string ip_address, out string message)
+        {
+            bool rowAffected = false;
+            message = null;
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("CUSTOMER_CONTRACT_APPROVAL_PROCESS.REJECT", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    //    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar, Username, ParameterDirection.Input);
+
+                    OracleParameter Param2 = new OracleParameter();
+                    Param2.ParameterName = "P_CONT_ID";
+                    Param2.DbType = DbType.Int32; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param2.Direction = ParameterDirection.Input;
+                    Param2.Value = count_id;
+                    cmd.Parameters.Add(Param2);
+
+                    OracleParameter Param4 = new OracleParameter();
+                    Param4.ParameterName = "P_REJ_REASON";
+                    Param4.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param4.Direction = ParameterDirection.Input;
+                    Param4.Value = rej_reason;
+                    cmd.Parameters.Add(Param4);
+
+                    OracleParameter Param1 = new OracleParameter();
+                    Param1.ParameterName = "P_USER_ID";
+                    Param1.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param1.Direction = ParameterDirection.Input;
+                    Param1.Value = user_id;
+                    cmd.Parameters.Add(Param1);
+
+
+                    OracleParameter Param3 = new OracleParameter();
+                    Param3.ParameterName = "P_IP_ADDRESS";
+                    Param3.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param3.Direction = ParameterDirection.Input;
+                    Param3.Value = ip_address;
+                    cmd.Parameters.Add(Param3);
+
+
+                    Param = new OracleParameter();
+                    Param.ParameterName = "P_MSG_ID";
+                    Param.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param.Direction = ParameterDirection.Output;
+                    Param.Size = 250;
+                    cmd.Parameters.Add(Param);
+
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        rowAffected = true;
+                        message = cmd.Parameters["P_MSG_ID"].Value.ToString();
+                        oraConnection.Close();
+                        return rowAffected;
+
+                        //  rowAffected = true;
+                        //string message = cmd.Parameters["P_MSG_ID"].Value.ToString();
+                        //  oraConnection.Close();
+                        //  return rowAffected;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            message = "";
+            return rowAffected;
+
+        }
+
+
+
+        public bool ApproveLeave(String doc_no, string Username,out string message)
+        {
+            bool rowAffected = false;
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("APPROVE_LEAVE", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    //    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar, Username, ParameterDirection.Input);
+
+                    Param = new OracleParameter();
+                    Param.ParameterName = "P_DOC_NO";
+                    Param.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param.Direction = ParameterDirection.Input;
+                    Param.Size = 88;
+                    Param.Value = doc_no;
+                    cmd.Parameters.Add(Param);
+
+                    OracleParameter Param1 = new OracleParameter();
+                    Param1.ParameterName = "P_USER_ID";
+                    Param1.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param1.Direction = ParameterDirection.Input;
+                    Param1.Value = Username;
+                    cmd.Parameters.Add(Param1);
+                    
+                    OracleParameter Param2 = new OracleParameter();
+                    Param2 = new OracleParameter();
+                    Param2.ParameterName = "P_MSG_TEXT";
+                    Param2.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param2.Direction = ParameterDirection.Output;
+                    Param2.Size = 250;
+                    cmd.Parameters.Add(Param2);
+              //      ora_cmd.Parameters.Add("P_MSG_TEXT", OracleDbType.Varchar2, message, ParameterDirection.Output);
+
+                    OracleParameter Param3 = new OracleParameter();
+                    Param3.ParameterName = "P_LANG";
+                    Param3.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param3.Direction = ParameterDirection.Input;
+                    Param3.Value = "E";
+                    cmd.Parameters.Add(Param3);
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        rowAffected = true;
+                       message = cmd.Parameters["P_MSG_TEXT"].Value.ToString();
+                        oraConnection.Close();
+                        return rowAffected;
+                    }                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            message = "";
+            return rowAffected;
+
+        }
+
+        //Reject Leave
+
+
+        public bool RejectLeave(string doc_no,string Username, string Rejreason, out string message)
+        {
+            bool rowAffected = false;
+        
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("REJECT_LEAVE", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    //    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar, Username, ParameterDirection.Input);
+
+                    OracleParameter Param2 = new OracleParameter();
+                    Param2.ParameterName = "P_DOC_NO";
+                    Param2.DbType = DbType.Int32; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param2.Direction = ParameterDirection.Input;
+                    Param2.Value = doc_no;
+                    cmd.Parameters.Add(Param2);
+
+                    OracleParameter Param1 = new OracleParameter();
+                    Param1.ParameterName = "P_USER_ID";
+                    Param1.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param1.Direction = ParameterDirection.Input;
+                    Param1.Value = Username;
+                    cmd.Parameters.Add(Param1);
+
+                    OracleParameter Param4 = new OracleParameter();
+                    Param4.ParameterName = "P_REASON";
+                    Param4.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param4.Direction = ParameterDirection.Input;
+                    Param4.Value = Rejreason;
+                    cmd.Parameters.Add(Param4);
+
+                    Param = new OracleParameter();
+                    Param.ParameterName = "P_MSG_TEXT";
+                    Param.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param.Direction = ParameterDirection.Output;
+                    Param.Size = 250;
+                    cmd.Parameters.Add(Param);
+
+
+                    OracleParameter Param3 = new OracleParameter();
+                    Param3.ParameterName = "P_LANG";
+                    Param3.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param3.Direction = ParameterDirection.Input;
+                    Param3.Value = "E";
+                    cmd.Parameters.Add(Param3);
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        rowAffected = true;
+                        message = cmd.Parameters["P_MSG_TEXT"].Value.ToString();
+                        oraConnection.Close();
+                        return rowAffected;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            oraConnection.Close();
+            message = "";
+            return rowAffected;
+
+        }
+
+
+
+      
+
+        //get Procurment approval APPROVAL LIST
+        internal DataTable GetProcList(string username)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT REQ_TYPE,REQ_NO,REQ_DATE,REQ_BY,REQ_DEPT_CODE,REQ_DEPT_HEAD,REQ_PURPOSE,SUBMIT,REQ_STATUS,REQ_STATUS_DESC FROM TABLE(PROC_APPROVAL_LIST(:username))", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("username", OracleType.VarChar)).Value = username;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                   oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        //GET Procurmenet details 
+        internal DataTable GetProcDetail(string reqno)
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("select REQ_TYPE,REQ_NO,REQ_SR_NO,REQ_ITEM_CODE,REQ_ITEM_NAME,MODELCODE,REQ_ITEM_SPECIFICATION,REQ_QTY,REQ_UNIT_OF_MEASURE,REQ_REF_NO,REQ_UNIT_PRICE,REQ_TOTAL_PRICE,REQ_RECVD_QTY,REQ_VENDOR_TYPE from PROCUREMENT_REQUEST_DETAIL  where REQ_NO =:reqno order by REQ_SR_NO", oraConnection);
+
+                    //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+                    cmd.Parameters.Add(new OracleParameter("reqno" , OracleType.VarChar)).Value = reqno;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        //===================================================Pro Approval
+
+        public bool ApproveProc(string p_req_type, string p_req_no, string p_dept_code, string p_req_by, string p_req_purpose, string p_req_date, string p_user_id, string p_host_name, string p_host_ip)
+        {
+            bool rowAffected = false;
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("MOB_PROC_APPROVAL", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    //    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar, Username, ParameterDirection.Input);
+
+                    OracleParameter Param1 = new OracleParameter();
+                    Param1.ParameterName = "P_REQ_TYPE";
+                    Param1.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param1.Direction = ParameterDirection.Input;
+             //       Param.Size = 88;
+                    Param1.Value = p_req_type;
+                    cmd.Parameters.Add(Param1);
+
+                    OracleParameter Param2 = new OracleParameter();
+                    Param2.ParameterName = "P_REQ_NO";
+                    Param2.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param2.Direction = ParameterDirection.Input;
+                 //   Param.Size = 88;
+                    Param2.Value = p_req_no;
+                    cmd.Parameters.Add(Param2);
+
+                    OracleParameter Param3 = new OracleParameter();
+                    Param3.ParameterName = "P_DEPT_CODE";
+                    Param3.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param3.Direction = ParameterDirection.Input;
+                    Param3.Value = p_dept_code;
+                    cmd.Parameters.Add(Param3);
+
+
+                    OracleParameter Param4 = new OracleParameter();
+                    Param4.ParameterName = "P_REQ_BY";
+                    Param4.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param4.Direction = ParameterDirection.Input;
+                    Param4.Value = p_req_by;
+                    cmd.Parameters.Add(Param4);
+
+                    OracleParameter Param5 = new OracleParameter();
+                    Param5.ParameterName = "P_REQ_PURPOSE";
+                    Param5.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param5.Direction = ParameterDirection.Input;
+                    Param5.Value = p_req_purpose;
+                    cmd.Parameters.Add(Param5);
+
+                    OracleParameter Param6 = new OracleParameter();
+                    Param6.ParameterName = "P_REQ_DATE";
+                    Param6.DbType = DbType.Date; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param6.Direction = ParameterDirection.Input;
+                    Param6.Value = p_req_date;
+                    cmd.Parameters.Add(Param6);
+                 
+                    OracleParameter Param7 = new OracleParameter();
+                    Param7.ParameterName = "P_USER_ID";
+                    Param7.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param7.Direction = ParameterDirection.Input;
+                    Param7.Value = p_user_id;
+                    cmd.Parameters.Add(Param7);
+
+                    OracleParameter Param8 = new OracleParameter();
+                    Param8.ParameterName = "P_HOST_NAME";
+                    Param8.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param8.Direction = ParameterDirection.Input;
+                    Param8.Value = p_host_name;
+                    cmd.Parameters.Add(Param8);
+
+                    OracleParameter Param9 = new OracleParameter();
+                    Param9.ParameterName = "P_HOST_IP";
+                    Param9.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param9.Direction = ParameterDirection.Input;
+                    Param9.Value = p_host_ip;
+                    cmd.Parameters.Add(Param9);
+
+                    
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        rowAffected = true;
+                        string message = "OK";
+                        oraConnection.Close();
+                        return rowAffected;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+         //   message = "";
+            return rowAffected;
+
+        }
+
+        //===================================================Pro Reject
+        public bool RejectProc(string p_req_type, string p_req_no, string p_user_id, string p_reject_reason)
+        {
+            bool rowAffected = false;
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand("MOB_PROC_REJECT ", oraConnection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    //    cmd.Parameters.Add("P_USER_ID", OracleType.VarChar, Username, ParameterDirection.Input);
+
+
+                    Param = new OracleParameter();
+                    Param.ParameterName = "P_REQ_TYPE";
+                    Param.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param.Direction = ParameterDirection.Input;
+                    Param.Size = 88;
+                    Param.Value = p_req_type;
+                    cmd.Parameters.Add(Param);
+                   
+                    OracleParameter Param1 = new OracleParameter();
+                    Param1.ParameterName = "P_REQ_NO";
+                    Param1.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param1.Direction = ParameterDirection.Input;
+                    Param1.Value = p_req_no;
+                    cmd.Parameters.Add(Param1);
+              
+                    OracleParameter Param3 = new OracleParameter();
+                    Param3.ParameterName = "P_USER_ID";
+                    Param3.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param3.Direction = ParameterDirection.Input;
+                    Param3.Value = p_user_id;
+                    cmd.Parameters.Add(Param3);
+
+                    OracleParameter Param4 = new OracleParameter();
+                    Param4.ParameterName = "P_REJECT_REASON";
+                    Param4.DbType = DbType.String; // don't use OracleDbType, will return decimal in some cases, not int
+                    Param4.Direction = ParameterDirection.Input;
+                    Param4.Value = p_reject_reason;
+                    cmd.Parameters.Add(Param4);
+
+                    if (cmd.ExecuteNonQuery() > 0)
+                    {
+                        rowAffected = true;
+                        string message = "OK";
+                        oraConnection.Close();
+                        return rowAffected;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+     //       message = "";
+            return rowAffected;
+
+        }
 
         //============================================ Accounts
 
@@ -503,6 +1228,143 @@ namespace Repositories
             oraConnection.Close();
             return null;
         }
+
+        //******************************************** Container Tracking for all *****************
+
+       internal DataTable GetTracking(string ContainerNo)
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand(" select od.bolnumber as bolnumber, substr(toid, 5, length(toid)) as Container_no, decode(sku, 'CNT20', '20 Ft.', 'CNT40', '40 Ft', 'CNT45', '45 Ft.') as sku, " +
+                                                          " carrierreference, company, curr_loc, od.storerkey as storerkey, od.sku as sku1, od.lot as lot from storer s, receipt r, operationdetails od " +
+                                                          " where r.storerkey = s.storerkey  and od.receiptkey = r.receiptkey and sku like 'CNT%' and r.storerkey like 'SDRS%' and " +
+                                                          " lot = (select max(TOLOT) from receiptdetail where substr(toid,5,length(toid)) = nvl(:ContainerNo,substr(toid,5,length(toid)))) and " +
+                                                          " substr(toid, 5, length(toid)) = nvl(:ContainerNo, substr(toid, 5, length(toid)))", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+       internal DataTable GetTrackingDetails(string ContainerNo)
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(" select 'Received in Bonded Zone'as status,to_char(datereceived,'dd/mm/yyyy HH24:MI:SS') as date1 ,datereceived as date2 from receiptdetail where " +
+                                                          " toid='CNT-'||:ContainerNo and tolot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) union all " +
+                                                          " select 'Moved to Strip Position :'||toloc,to_char(trans_date, 'dd/mm/yyyy HH24:MI:SS'),trans_date from cont_movement_detail where " +
+                                                          " container_no='CNT-'||:ContainerNo and lot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) and fromloc='SHIFTOUT' union all " +
+                                                          " select description1, to_char(effectivedate, 'dd/mm/yyyy HH24:MI:SS'), effectivedate " +
+                                                          " from containerstatus_view where  toid='CNT-'||:ContainerNo and tolot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) union all " +
+                                                          " select 'Shipped from Bonded Zone',to_char(effectivedate, 'dd/mm/yyyy HH24:MI:SS'),effectivedate from pickdetail " +
+                                                          " where id='CNT-'||:ContainerNo and lot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) order by 3", oraConnection);
+
+                    cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+        // =================================================Cargo Tracking For All ==========================
+
+
+        internal DataTable GetCargoTracking(string CargoblNo)
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+                    OracleCommand cmd = new OracleCommand(" select main_consignee,main_consignee_name,T.storerkey as storerkey,company,bolnumber,containerno, " +
+                                                          " truck_number,to_char(recvd_date, 'dd/mm/yyyy') as recvd_date,recvd_loc,curr_loc,recvd_qty,recvd_weight, " +
+                                                          " to_char(shipped_date, 'dd/mm/yyyy hh24:mi:ss') as shipped_date,tolot from storer s, WEB_CARGO_DETAIL T where " +
+                                                          " T.storerkey = s.storerkey and bolnumber = :CargoblNo order by t.curr_loc", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("CargoblNo", OracleType.VarChar)).Value = CargoblNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+ // ====================================================Cargo History
+        internal DataTable GetCargoHistory(string CargoblNo)
+        {
+            try
+            {
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand(" Select ENG_DESC,TO_CHAR(CTH_ACTION_DATETIME,'DD/MM/YYYY HH24:MI:SS') as date_done From " +
+                                                          " CODELKUP, CARGO_TRANSFER_REQUEST, CARGO_TRANSFER_HISTORY Where " +
+                                                          " CTH_NUMBER = CTR_NUMBER and CT_ACTION = CODE and LISTNAME = 'CARGTRANSACTION' " +
+                                                          " and CTR_BOLNUMBER = :CargoblNo order by CTH_ACTION_DATETIME DESC", oraConnection);
+                    cmd.Parameters.Add(new OracleParameter("CargoblNo", OracleType.VarChar)).Value = CargoblNo;
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+
+
+
+
+
+
+
+
 
 
         //============================================ News
@@ -869,12 +1731,127 @@ namespace Repositories
         }
 
 
-	}
-    
-   
 
-   
+
+        //**************************************************** careers ****************************
+        internal DataTable GetJobTitles()
+        {
+            try
+            {
+
+                oraConnection.Open();
+                if (oraConnection.State == ConnectionState.Open)
+                {
+
+                    OracleCommand cmd = new OracleCommand("SELECT TITLE,EXPERIENCE,POSTED_ON,JOBDESCRIPTION FROM careers WHERE STATUS = '1' ORDER BY ID ", oraConnection);
+
+                    DataTable dt = new DataTable();
+                    OracleDataAdapter da = new OracleDataAdapter(cmd);
+                    da.Fill(dt);
+                    oraConnection.Close();
+                    return dt;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            oraConnection.Close();
+            return null;
+        }
+
+
+        //**************************************************************Container Status all ************************** 
     
+        
+        //internal DataTable GetContainer1(string ContainerNo)
+        //{
+        //    try
+        //    {
+
+        //        oraConnection.Open();
+        //        if (oraConnection.State == ConnectionState.Open)
+        //        {
+
+        //            OracleCommand cmd = new OracleCommand("select od.bolnumber as bolnumber, substr(toid, 5, length(toid)) as Container_no, decode(sku, 'CNT20', '20 Ft.', 'CNT40', '40 Ft', 'CNT45', '45 Ft.') as sku," +
+        //                                                   " carrierreference, company, curr_loc, od.storerkey as storerkey, od.sku as sku1, od.lot as lot" +
+        //                                                   " from storer s, receipt r, operationdetails od " +
+        //                                                   " where r.storerkey = s.storerkey and od.receiptkey = r.receiptkey and " +
+        //                                                   " sku like 'CNT%' and r.storerkey like 'SDRS%' and  lot = (select max(TOLOT) " +
+        //                                                   " from receiptdetail where substr(toid,5,length(toid))=nvl(:ContainerNo,substr(toid,5,length(toid)))) " +
+        //                                                   " and r.storerkey in nvl(:ConsigneeID,r.storerkey) " +
+        //                                                   " and substr(toid, 5, length(toid)) = " +
+        //                                                   " nvl(:ContainerNo, substr(toid, 5, length(toid)))", oraConnection);
+
+        //            //   cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+        //            //  cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = string.IsNullOrEmpty(ConsigneeId) ? string.Empty : ConsigneeId;
+        //            cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+        //            DataTable dt = new DataTable();
+        //            OracleDataAdapter da = new OracleDataAdapter(cmd);
+        //            da.Fill(dt);
+        //            oraConnection.Close();
+        //            return dt;
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+
+        //    }
+        //    oraConnection.Close();
+        //    return null;
+        //}
+
+        //internal DataTable GetContainerDetails1(string ContainerNo)
+        //{
+        //    try
+        //    {
+
+        //        oraConnection.Open();
+        //        if (oraConnection.State == ConnectionState.Open)
+        //        {
+
+        //            OracleCommand cmd = new OracleCommand(" select 'Received in Bonded Zone'as status,to_char(datereceived,'dd/mm/yyyy HH24:MI:SS') as date1 ,datereceived as date2 from receiptdetail where " +
+        //                                                  " toid='CNT-'||:ContainerNo and storerkey =nvl(:ConsigneeID,storerkey) and tolot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) union all " +
+        //                                                  " select 'Moved to Strip Position :'||toloc,to_char(trans_date, 'dd/mm/yyyy HH24:MI:SS'),trans_date from cont_movement_detail where " +
+        //                                                  " container_no='CNT-'||:ContainerNo and lot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) and fromloc='SHIFTOUT' and storerkey=nvl(:ConsigneeID,storerkey) union all " +
+        //                                                  " select description1, to_char(effectivedate, 'dd/mm/yyyy HH24:MI:SS'), effectivedate " +
+        //                                                  " from containerstatus_view where TOSTORERKEY=nvl(:ConsigneeID,TOSTORERKEY) and toid='CNT-'||:ContainerNo and tolot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) union all " +
+        //                                                  " select 'Shipped from Bonded Zone',to_char(effectivedate, 'dd/mm/yyyy HH24:MI:SS'),effectivedate from pickdetail " +
+        //                                                  " where id='CNT-'||:ContainerNo and lot=(select max(TOLOT) from receiptdetail where toid='CNT-'||:ContainerNo) order by 3", oraConnection);
+
+        //            //    cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = string.IsNullOrEmpty(ConsigneeId) ? string.Empty : ConsigneeId;
+        //            //cmd.Parameters.Add(new OracleParameter("ConsigneeID", OracleType.VarChar)).Value = ConsigneeId;
+        //            cmd.Parameters.Add(new OracleParameter("ContainerNo", OracleType.VarChar)).Value = ContainerNo;
+        //            DataTable dt = new DataTable();
+        //            OracleDataAdapter da = new OracleDataAdapter(cmd);
+        //            da.Fill(dt);
+        //            oraConnection.Close();
+        //            return dt;
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+
+        //    }
+        //    oraConnection.Close();
+        //    return null;
+        //}
+
+
+
+    }
+
+
+    
+
 
 
 

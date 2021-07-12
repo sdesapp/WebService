@@ -14,7 +14,7 @@ using Repositories;
 namespace mService.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    [RESTAuthorize]
+   // [RESTAuthorize]
     public class CntstatusController : ApiController
     {
 
@@ -88,10 +88,7 @@ namespace mService.Controllers
             return Details;
            
         }
-
-
-        
-
-
     }
+   
+
 }
